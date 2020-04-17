@@ -284,68 +284,6 @@ style quick_button_text:
 ## Main and Game Menu Screens
 ################################################################################
 
-## Navigation screen ###########################################################
-##
-## This screen is included in the main and game menus, and provides navigation
-## to other menus, and to start the game.
-
-screen navigation():
-
-    vbox:
-        style_prefix "navigation"
-
-        xpos gui.navigation_xpos
-        yalign 0.5
-
-        spacing gui.navigation_spacing
-
-        if main_menu:
-
-            textbutton _("Start") action Start()
-
-        else:
-
-            textbutton _("History") action ShowMenu("history")
-
-            textbutton _("Save") action ShowMenu("save")
-
-        textbutton _("Load") action ShowMenu("load")
-
-        textbutton _("Preferences") action ShowMenu("preferences")
-
-        if _in_replay:
-
-            textbutton _("End Replay") action EndReplay(confirm=True)
-
-        elif not main_menu:
-
-            textbutton _("Main Menu") action MainMenu()
-
-        textbutton _("About") action ShowMenu("about")
-
-        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
-
-            ## Help isn't necessary or relevant to mobile devices.
-            textbutton _("Help") action ShowMenu("help")
-
-        if renpy.variant("pc"):
-
-            ## The quit button is banned on iOS and unnecessary on Android and
-            ## Web.
-            textbutton _("Quit") action Quit(confirm=not main_menu)
-
-
-style navigation_button is gui_button
-style navigation_button_text is gui_button_text
-
-style navigation_button:
-    size_group "navigation"
-    properties gui.button_properties("navigation_button")
-
-style navigation_button_text:
-    properties gui.button_text_properties("navigation_button")
-
-
 ## Main Menu screen ############################################################
 ##
 ## Used to display the main menu when Ren'Py starts.
@@ -362,32 +300,31 @@ screen main_menu():
     
     style_prefix "main_menu"
 
-    add "gui/menus/main_menu.png"
+    add im.FactorScale("gui/menus/main_menu.png", 1.7)
     
-    text "Непростая" yalign 0.1 xalign 0.2
-    text "история" yalign 0.2 xalign 0.8
+    text "Непростая" yalign 0.1 xalign 0.2 
+    text "история" yalign 0.2 xalign 0.8 
     vbox:
         textbutton _("Начать") xalign 0.5 action Start()        
-        textbutton _("Загрузить") xalign 0.5  action ShowMenu("load")
+        textbutton _("Загрузить") xalign 0.5 action ShowMenu("load")
         textbutton _("Настройки") xalign 0.5 action ShowMenu("preferences")
         textbutton _("Выход") xalign 0.5 action Quit(confirm=not main_menu)
 
-    
 style main_menu_vbox:
-    xalign 0.5
     xmaximum 1200
+    xalign 0.5
     yalign 0.8
-    spacing 30
+    spacing 50
         
 style main_menu_text is gui_text:
-    size 250
-    color ("000000")
-    font "fonts/mm_name.ttf"
+    size 170
+    color ("#FFFFFF")
+    font "fonts/chalk.ttf"
     
 style main_menu_button_text is gui_text:
-    size 135
-    color ("CA0303")
-    font "fonts/mm_font.ttf"  
+    size 120
+    color ("#FFFFFF")
+    font "fonts/chalk.ttf"  
 
 ## Game Menu screen ############################################################
 ##
@@ -542,6 +479,7 @@ style page_label_text is gui_label_text
 style page_button is gui_button
 style page_button_text is gui_button_text
 
+
 style slot_button is gui_button
 style slot_button_text is gui_button_text
 style slot_time_text is slot_button_text
@@ -549,6 +487,9 @@ style slot_name_text is slot_button_text
 
 style background:
     xmaximum 300
+    
+style button_text is gui_text:
+    color("000000")
 
 style page_label:
     xpadding 43
@@ -582,8 +523,14 @@ style slot_button_text:
 screen preferences():
 
     tag menu
-    text "Это окно все ще в разработке" yalign 0.3 xalign 0.2
-    textbutton _("Вернутся") xalign 0.5 action Return()
+    style_prefix "pref"
+    add "#000000"
+    text "Это окно все ще в разработке" yalign 0.3 xalign 0.5
+    textbutton _("Вернутся") xalign 0.1 action Return()
+    
+style button_text is gui_text:
+    color("#FFFFFF")
+        
     
 ## History screen ##############################################################
 ##
@@ -596,8 +543,14 @@ screen preferences():
 screen history():
 
     tag menu
-    text "Это окно все ще в разработке" yalign 0.3 xalign 0.2
-    textbutton _("Вернутся") xalign 0.5 action Return()
+    style_prefix "history"
+    add "#000000"
+    text "Это окно все ще в разработке" yalign 0.3 xalign 0.5
+    textbutton _("Вернутся") xalign 0.1 action Return()
+    
+style button_text is gui_text:
+    color("#FFFFFF")
+
 
 ## This determines what tags are allowed to be displayed on the history screen.
 

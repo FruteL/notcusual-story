@@ -426,10 +426,10 @@ init python:
         ## Font sizes.
         gui.text_size = 80
         gui.name_text_size = 100
-        gui.notify_text_size = 22
-        gui.interface_text_size = 26
-        gui.button_text_size = 26
-        gui.label_text_size = 29
+        #gui.notify_text_size = 22
+        #gui.interface_text_size = 26
+        #gui.button_text_size = 26
+        #gui.label_text_size = 29
 
         ## Adjust the location of the textbox.
         gui.textbox_height = 203

@@ -3,9 +3,11 @@
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
 
-define e = Character("Eileen")
-image kate = "images/kate_usual_smile.jpg"
-
+define e = Character("Катюша")
+define r = Character("Рома")
+image kate =  im.FactorScale("images/sprites/kate_usual_smile.png", 1.2)
+image roma = im.FactorScale("images/sprites/Rome_.png", 1.2) 
+image bg cafe = "images/background/cafe.jpg"
 
 # The game starts here.
 
@@ -16,7 +18,7 @@ label start:
     # add a file (named either "bg room.png" or "bg room.jpg") to the
     # images directory to show it.
 
-    scene bg room
+    scene bg cafe
 
     # This shows a character sprite. A placeholder is used, but you can
     # replace it by adding a file named "eileen happy.png" to the images
@@ -26,11 +28,12 @@ label start:
 
     # These display lines of dialogue.
 
-    e "На данный момент Сюжет еще в разработке."
-
+    e "Сюжет еще в разработке."
     e "Вскоре появиться сам Геймплей!"
-    
     e "На паре этих строк можно проверить систему сейв/лоад"
+    hide kate with dissolve
+    show roma
+    r "Увы. на данный момент нам больше нечего показать"
 
     # This ends the game.
 

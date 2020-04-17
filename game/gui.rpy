@@ -424,7 +424,7 @@ init python:
     if renpy.variant("small"):
 
         ## Font sizes.
-        gui.text_size = 80
+        gui.text_size = 60
         gui.name_text_size = 100
         #gui.notify_text_size = 22
         #gui.interface_text_size = 26
