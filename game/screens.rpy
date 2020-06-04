@@ -130,17 +130,15 @@ style say_thought is say_dialogue
 style namebox is default
 style namebox_label is say_label
 
-
 style window:
     xalign 0.5
     xfill True
     yalign 1.0
     ysize 500
-
-    background Image(im.MatrixColor("gui/textbox.png", im.matrix.opacity(.85)), xalign=0.5, yalign=1.0)
+    background Image(im.MatrixColor("gui/TextBox2.0.png", im.matrix.opacity(.75)), xalign=0.5, yalign=1.0)
 
 style namebox:
-    xpos 100
+    xpos 40
     xanchor gui.name_xalign
     xsize gui.namebox_width
     ypos 10
@@ -156,8 +154,7 @@ style say_label:
 
 style say_dialogue:
     properties gui.text_properties("dialogue")
-
-    xpos 60
+    xpos 40
     xsize 960
     ypos 140
     
@@ -225,7 +222,8 @@ style choice_button_text is button_text
 
 style choice_vbox:
     xalign 0.5
-    ypos 228
+    yalign 0.5
+    #ypos 228
     yanchor 0.5
 
     spacing gui.choice_spacing
@@ -249,15 +247,15 @@ screen quick_menu():
 
     if quick_menu:
         #textbutton _("M")
-        imagebutton auto "gui/button/qmenu_%s.png" xalign 1.0 action ShowMenu('game_menu')
+        imagebutton auto "gui/button/qmenu_%s.png" xalign 0.0 action ShowMenu('game_menu')
 
         hbox:
             style_prefix "quick"
 
             xalign 0.5
-            yalign 1.0
+            yalign 0.0
+            spacing 40
 
-            textbutton _("History") action ShowMenu('history')
             textbutton _("Back") action Rollback()
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
@@ -272,12 +270,14 @@ default quick_menu = True
 
 style quick_button is default
 style quick_button_text is button_text
+        
 
 style quick_button:
     properties gui.button_properties("quick_button")
 
 style quick_button_text:
     properties gui.button_text_properties("quick_button")
+    size 50
 
 
 ################################################################################
@@ -291,9 +291,9 @@ style quick_button_text:
 ## https://www.renpy.org/doc/html/screen_special.html#main-menu
 
 screen main_menu():
-    
     python:
-        renpy.music.queue("audio/gui/Stop Crying.mp3", channel = "music", fadein = 2)   
+        if persistent.m == 1:
+                renpy.music.queue("audio/gui/Stop Crying.mp3", channel = "music", fadein = 2)  
         renpy.music.set_volume(0.3, delay = 0, channel='music')
     
     tag menu
@@ -308,12 +308,13 @@ screen main_menu():
         textbutton _("Начать") xalign 0.5 action Start()        
         textbutton _("Загрузить") xalign 0.5 action ShowMenu("load")
         textbutton _("Настройки") xalign 0.5 action ShowMenu("preferences")
+        textbutton _("Достижения") xalign 0.5 action ShowMenu("achi")
         textbutton _("Выход") xalign 0.5 action Quit(confirm=not main_menu)
 
 style main_menu_vbox:
     xmaximum 1200
     xalign 0.5
-    yalign 0.8
+    yalign 0.75
     spacing 50
         
 style main_menu_text is gui_text:
@@ -338,6 +339,7 @@ style main_menu_button_text is gui_text:
 screen game_menu():
 
     modal True
+    tag menu
    
     style_prefix "game_menu"
     
@@ -446,6 +448,7 @@ screen file_slots(title):
         yalign 1.0
         xalign 0.5
         ymaximum 100
+        spacing 20
         for i in range(1, 6):
             textbutton _("%d" % i) action FilePage(i)
     
@@ -472,7 +475,6 @@ screen file_slots(title):
             
                 $ file_name = FileSlotName(i, columns*rows)
                 
-                
         
 style page_label is gui_label
 style page_label_text is gui_label_text
@@ -481,7 +483,8 @@ style page_button_text is gui_button_text
 
 
 style slot_button is gui_button
-style slot_button_text is gui_button_text
+style slot_button_text is gui_button_text:
+    size 30
 style slot_time_text is slot_button_text
 style slot_name_text is slot_button_text
 
@@ -512,7 +515,6 @@ style slot_button:
 style slot_button_text:
     properties gui.button_text_properties("slot_button")
 
-
 ## Preferences screen ##########################################################
 ##
 ## The preferences screen allows the player to configure the game to better suit
@@ -524,239 +526,45 @@ screen preferences():
 
     tag menu
     style_prefix "pref"
-    add "#000000"
-    text "Это окно все ще в разработке" yalign 0.3 xalign 0.5
-    textbutton _("Вернутся") xalign 0.1 action Return()
+    add im.FactorScale("gui/menus/main_menu.png", 1.7)
+    vbox:
+          yalign 0.3
+          spacing 100
+          xalign 0.5
+          text "Настройки" 
+          vbox:
+              spacing 60
+              text "Text Speed"
+              bar value Preference("text speed")
+              text "Auto-Forward Time"
+              bar value Preference("auto-forward time")
+          vbox:
+              spacing 60
+              text "Music Volume"
+              bar value Preference("music volume")
+              text "Sound Volume"
+              bar value Preference("sound volume")
+
+          vbox:
+              text _("Version [config.version!t]\n") 
+    textbutton _("Вернутся") xalign 0.1 yalign 0.95 action Return()
     
 style button_text is gui_text:
-    color("#FFFFFF")
+    size 80
+    color ("#FFFFFF")
+    font "fonts/chalk.ttf"
+
+style slider:
+    ysize gui.slider_size
+    base_bar Frame("gui/slider/hor_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
+    thumb "gui/slider/hor_[prefix_]thumb.png"
+style pref_text is gui_text:
+    size 80
+    color ("#80D4FF")
+    font "fonts/chalk.ttf"
+    xalign 0.5
         
     
-## History screen ##############################################################
-##
-## This is a screen that displays the dialogue history to the player. While
-## there isn't anything special about this screen, it does have to access the
-## dialogue history stored in _history_list.
-##
-## https://www.renpy.org/doc/html/history.html
-
-screen history():
-
-    tag menu
-    style_prefix "history"
-    add "#000000"
-    text "Это окно все ще в разработке" yalign 0.3 xalign 0.5
-    textbutton _("Вернутся") xalign 0.1 action Return()
-    
-style button_text is gui_text:
-    color("#FFFFFF")
-
-
-## This determines what tags are allowed to be displayed on the history screen.
-
-define gui.history_allow_tags = set()
-
-
-style history_window is empty
-
-style history_name is gui_label
-style history_name_text is gui_label_text
-style history_text is gui_text
-
-style history_text is gui_text
-
-style history_label is gui_label
-style history_label_text is gui_label_text
-
-style history_window:
-    xfill True
-    ysize gui.history_height
-
-style history_name:
-    xpos gui.history_name_xpos
-    xanchor gui.history_name_xalign
-    ypos gui.history_name_ypos
-    xsize gui.history_name_width
-
-style history_name_text:
-    min_width gui.history_name_width
-    text_align gui.history_name_xalign
-
-style history_text:
-    xpos gui.history_text_xpos
-    ypos gui.history_text_ypos
-    xanchor gui.history_text_xalign
-    xsize gui.history_text_width
-    min_width gui.history_text_width
-    text_align gui.history_text_xalign
-    layout ("subtitle" if gui.history_text_xalign else "tex")
-
-style history_label:
-    xfill True
-
-style history_label_text:
-    xalign 0.5
-
-
-## Help screen #################################################################
-##
-## A screen that gives information about key and mouse bindings. It uses other
-## screens (keyboard_help, mouse_help, and gamepad_help) to display the actual
-## help.
-
-screen help():
-
-    tag menu
-
-    default device = "keyboard"
-
-    use game_menu(_("Help"), scroll="viewport"):
-
-        style_prefix "help"
-
-        vbox:
-            spacing 13
-
-            hbox:
-
-                textbutton _("Keyboard") action SetScreenVariable("device", "keyboard")
-                textbutton _("Mouse") action SetScreenVariable("device", "mouse")
-
-                if GamepadExists():
-                    textbutton _("Gamepad") action SetScreenVariable("device", "gamepad")
-
-            if device == "keyboard":
-                use keyboard_help
-            elif device == "mouse":
-                use mouse_help
-            elif device == "gamepad":
-                use gamepad_help
-
-
-screen keyboard_help():
-
-    hbox:
-        label _("Enter")
-        text _("Advances dialogue and activates the interface.")
-
-    hbox:
-        label _("Space")
-        text _("Advances dialogue without selecting choices.")
-
-    hbox:
-        label _("Arrow Keys")
-        text _("Navigate the interface.")
-
-    hbox:
-        label _("Escape")
-        text _("Accesses the game menu.")
-
-    hbox:
-        label _("Ctrl")
-        text _("Skips dialogue while held down.")
-
-    hbox:
-        label _("Tab")
-        text _("Toggles dialogue skipping.")
-
-    hbox:
-        label _("Page Up")
-        text _("Rolls back to earlier dialogue.")
-
-    hbox:
-        label _("Page Down")
-        text _("Rolls forward to later dialogue.")
-
-    hbox:
-        label "H"
-        text _("Hides the user interface.")
-
-    hbox:
-        label "S"
-        text _("Takes a screenshot.")
-
-    hbox:
-        label "V"
-        text _("Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}.")
-
-
-screen mouse_help():
-
-    hbox:
-        label _("Left Click")
-        text _("Advances dialogue and activates the interface.")
-
-    hbox:
-        label _("Middle Click")
-        text _("Hides the user interface.")
-
-    hbox:
-        label _("Right Click")
-        text _("Accesses the game menu.")
-
-    hbox:
-        label _("Mouse Wheel Up\nClick Rollback Side")
-        text _("Rolls back to earlier dialogue.")
-
-    hbox:
-        label _("Mouse Wheel Down")
-        text _("Rolls forward to later dialogue.")
-
-
-screen gamepad_help():
-
-    hbox:
-        label _("Right Trigger\nA/Bottom Button")
-        text _("Advances dialogue and activates the interface.")
-
-    hbox:
-        label _("Left Trigger\nLeft Shoulder")
-        text _("Rolls back to earlier dialogue.")
-
-    hbox:
-        label _("Right Shoulder")
-        text _("Rolls forward to later dialogue.")
-
-
-    hbox:
-        label _("D-Pad, Sticks")
-        text _("Navigate the interface.")
-
-    hbox:
-        label _("Start, Guide")
-        text _("Accesses the game menu.")
-
-    hbox:
-        label _("Y/Top Button")
-        text _("Hides the user interface.")
-
-    textbutton _("Calibrate") action GamepadCalibrate()
-
-
-style help_button is gui_button
-style help_button_text is gui_button_text
-style help_label is gui_label
-style help_label_text is gui_label_text
-style help_text is gui_text
-
-style help_button:
-    properties gui.button_properties("help_button")
-    xmargin 7
-
-style help_button_text:
-    properties gui.button_text_properties("help_button")
-
-style help_label:
-    xsize 211
-    right_padding 17
-
-style help_label_text:
-    size gui.text_size
-    xalign 1.0
-    text_align 1.0
-
-
-
 ################################################################################
 ## Additional screens
 ################################################################################
@@ -779,13 +587,13 @@ screen confirm(message, yes_action, no_action):
     style_prefix "confirm"
     
     if(message == layout.OVERWRITE_SAVE):
-        $t = "Уверены?"
+        $t = "Старое сохранение будет утеряно. Вы уверены?"
     if(message == layout.LOADING):
-        $t = "Уверены?"
+        $t = "Все несохраненные данные будут утеряны. Вы уверены?"
     if(message == layout.QUIT):
         $t = "Уверены?"
     if(message == layout.MAIN_MENU):
-        $t = "Уверены?"
+        $t = "Все несохраненные данные будут утеряны. Вы уверены?"
     
     add "gui/overlay/confirm.png"
 
@@ -794,7 +602,7 @@ screen confirm(message, yes_action, no_action):
         vbox:
             xalign .5
             yalign .5
-            spacing 26
+            spacing 30
 
             label _(t):
                 style "confirm_prompt"
@@ -826,12 +634,18 @@ style confirm_frame:
 style confirm_prompt_text:
     text_align 0.5
     layout "subtitle"
+    size 70
+    color ("#FFFFFF")
+    font "fonts/chalk.ttf" 
 
 style confirm_button:
-    properties gui.button_properties("confirm_button")
+    properties gui.button_properties("confirm_button") 
 
 style confirm_button_text:
     properties gui.button_text_properties("confirm_button")
+    size 90
+    color ("#FFFFFF")
+    font "fonts/chalk.ttf" 
 
 
 ## Skip indicator screen #######################################################
@@ -929,125 +743,6 @@ style notify_text:
     properties gui.text_properties("notify")
 
 
-## NVL screen ##################################################################
-##
-## This screen is used for NVL-mode dialogue and menus.
-##
-## https://www.renpy.org/doc/html/screen_special.html#nvl
-
-
-screen nvl(dialogue, items=None):
-
-    window:
-        style "nvl_window"
-
-        has vbox:
-            spacing gui.nvl_spacing
-
-        ## Displays dialogue in either a vpgrid or the vbox.
-        if gui.nvl_height:
-
-            vpgrid:
-                cols 1
-                yinitial 1.0
-
-                use nvl_dialogue(dialogue)
-
-        else:
-
-            use nvl_dialogue(dialogue)
-
-        ## Displays the menu, if given. The menu may be displayed incorrectly if
-        ## config.narrator_menu is set to True, as it is above.
-        for i in items:
-
-            textbutton i.caption:
-                action i.action
-                style "nvl_button"
-
-    add SideImage() xalign 0.0 yalign 1.0
-
-
-screen nvl_dialogue(dialogue):
-
-    for d in dialogue:
-
-        window:
-            id d.window_id
-
-            fixed:
-                yfit gui.nvl_height is None
-
-                if d.who is not None:
-
-                    text d.who:
-                        id d.who_id
-
-                text d.what:
-                    id d.what_id
-
-
-## This controls the maximum number of NVL-mode entries that can be displayed at
-## once.
-define config.nvl_list_length = gui.nvl_list_length
-
-style nvl_window is default
-style nvl_entry is default
-
-style nvl_label is say_label
-style nvl_dialogue is say_dialogue
-
-style nvl_button is button
-style nvl_button_text is button_text
-
-style nvl_window:
-    xfill True
-    yfill True
-
-    background "gui/nvl.png"
-    padding gui.nvl_borders.padding
-
-style nvl_entry:
-    xfill True
-    ysize gui.nvl_height
-
-style nvl_label:
-    xpos gui.nvl_name_xpos
-    xanchor gui.nvl_name_xalign
-    ypos gui.nvl_name_ypos
-    yanchor 0.0
-    xsize gui.nvl_name_width
-    min_width gui.nvl_name_width
-    text_align gui.nvl_name_xalign
-
-style nvl_dialogue:
-    xpos gui.nvl_text_xpos
-    xanchor gui.nvl_text_xalign
-    ypos gui.nvl_text_ypos
-    xsize gui.nvl_text_width
-    min_width gui.nvl_text_width
-    text_align gui.nvl_text_xalign
-    layout ("subtitle" if gui.nvl_text_xalign else "tex")
-
-style nvl_thought:
-    xpos gui.nvl_thought_xpos
-    xanchor gui.nvl_thought_xalign
-    ypos gui.nvl_thought_ypos
-    xsize gui.nvl_thought_width
-    min_width gui.nvl_thought_width
-    text_align gui.nvl_thought_xalign
-    layout ("subtitle" if gui.nvl_text_xalign else "tex")
-
-style nvl_button:
-    properties gui.button_properties("nvl_button")
-    xpos gui.nvl_button_xpos
-    xanchor gui.nvl_button_xalign
-
-style nvl_button_text:
-    properties gui.button_text_properties("nvl_button")
-
-
-
 ################################################################################
 ## Mobile Variants
 ################################################################################
@@ -1112,10 +807,10 @@ style vscrollbar:
     thumb Frame("gui/phone/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
 
 style slider:
-    variant "small"
     ysize gui.slider_size
-    base_bar Frame("gui/phone/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
-    thumb "gui/phone/slider/horizontal_[prefix_]thumb.png"
+    xsize 1000
+    base_bar Frame("gui/slider/hor_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
+    thumb "gui/slider/hor_[prefix_]thumb.png"
 
 style vslider:
     variant "small"
